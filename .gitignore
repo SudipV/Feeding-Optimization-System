@@ -1,0 +1,42 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+env/
+.venv/
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore log files
+*.log
+logs/
+
+# Ignore dataset files (if not needed in the repo)
+data/synthetic/fish_images/
+data/feeding_events.csv
+data/water_data.csv
+
+# Ignore machine learning models
+models/*.joblib
+
+# Ignore environment variables
+.env
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore temporary files
+*.tmp
+*~
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

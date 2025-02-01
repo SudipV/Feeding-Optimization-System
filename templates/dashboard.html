@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Optimization Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .card {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f9f9f9;
+      }
+      .card h2 {
+        margin-top: 0;
+        color: #555;
+      }
+      .loading {
+        text-align: center;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Feeding Optimization Dashboard</h1>
+
+      <!-- Feeding Activity -->
+      <div class="card">
+        <h2>Feeding Activity</h2>
+        <p>
+          <strong>Activity Score:</strong>
+          <span id="activity-score">Loading...</span>
+        </p>
+      </div>
+
+      <!-- Water Quality -->
+      <div class="card">
+        <h2>Water Quality</h2>
+        <p>
+          <strong>Temperature:</strong>
+          <span id="temperature">Loading...</span>°C
+        </p>
+        <p><strong>Oxygen:</strong> <span id="oxygen">Loading...</span> mg/L</p>
+        <p><strong>pH:</strong> <span id="ph">Loading...</span></p>
+        <p>
+          <strong>Turbidity:</strong> <span id="turbidity">Loading...</span> NTU
+        </p>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card">
+        <h2>Recommendations</h2>
+        <p id="recommendation" class="loading">Loading...</p>
+      </div>
+
+      <!-- Feeding Activity Over Time -->
+      <div class="card">
+        <h2>Feeding Activity Over Time</h2>
+        <canvas id="activity-chart" width="400" height="200"></canvas>
+      </div>
+    </div>
+
+    <script>
+      // Fetch data from the backend API
+      async function fetchData() {
+        try {
+          const response = await fetch("/api/data");
+          const data = await response.json();
+
+          // Update the dashboard with real-time data
+          document.getElementById("activity-score").textContent =
+            data.activity_score.toFixed(2);
+          document.getElementById("temperature").textContent =
+            data.temperature.toFixed(1);
+          document.getElementById("oxygen").textContent =
+            data.oxygen.toFixed(1);
+          document.getElementById("ph").textContent = data.ph.toFixed(1);
+          document.getElementById("turbidity").textContent =
+            data.turbidity.toFixed(1);
+          document.getElementById("recommendation").textContent =
+            data.recommendation;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      // Fetch historical data and render the chart
+      async function fetchHistoricalData() {
+        try {
+          const response = await fetch("/api/historical-data");
+          const data = await response.json();
+
+          // Render the chart
+          const ctx = document
+            .getElementById("activity-chart")
+            .getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: data.timestamps,
+              datasets: [
+                {
+                  label: "Feeding Activity Score",
+                  data: data.activity_scores,
+                  borderColor: "rgba(75, 192, 192, 1)",
+                  borderWidth: 2,
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: "top",
+                },
+              },
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: "Time",
+                  },
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: "Activity Score",
+                  },
+                  beginAtZero: false,
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error("Error fetching historical data:", error);
+        }
+      }
+
+      // Fetch data every 10 seconds
+      setInterval(fetchData, 10000);
+
+      // Initial data fetch
+      fetchData();
+      fetchHistoricalData();
+    </script>
+  </body>
+</html>
