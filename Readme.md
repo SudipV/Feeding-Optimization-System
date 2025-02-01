@@ -42,7 +42,7 @@ Before you begin, ensure you have the following installed:
 ### Step 1: Clone the Repository
 
 
-git clone https://github.com/yourusername/feeding-optimization-system.git
+git clone https://github.com/SudipV/Feeding-Optimization-System.git
 cd feeding-optimization-system
 
 
